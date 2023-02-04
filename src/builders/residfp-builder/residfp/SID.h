@@ -105,6 +105,9 @@ private:
     /// Flags for muted channels
     bool muted[3];
 
+    // +deadbeef: optimization for seeking, mute the sidemu while seeking to get slightly better speed.
+    bool isMuted{false};
+
     /**
      * Emulated nonlinearity of the envelope DAC.
      *
@@ -145,6 +148,7 @@ private:
 public:
     SID();
     ~SID();
+
 
     /**
      * Set chip model.
@@ -211,6 +215,9 @@ public:
      * @param enable is muted?
      */
     void mute(int channel, bool enable) { muted[channel] = enable; }
+
+    // +deadbeef: optimization for seeking, mute the sidemu while seeking to get slightly better speed.
+    void setIsMuted(bool muted) { isMuted = muted; }
 
     /**
      * Setting of SID sampling parameters.
@@ -336,19 +343,26 @@ int SID::clock(unsigned int cycles, short* buf)
         {
             for (unsigned int i = 0; i < delta_t; i++)
             {
-                // clock waveform generators
-                voice[0]->wave()->clock();
-                voice[1]->wave()->clock();
-                voice[2]->wave()->clock();
+                // +deadbeef: optimization for seeking, mute the sidemu while seeking to get slightly better speed.
+                if (likely(!isMuted)) {
+                    // clock waveform generators
+                    voice[0]->wave()->clock();
+                    voice[1]->wave()->clock();
+                    voice[2]->wave()->clock();
 
-                // clock envelope generators
-                voice[0]->envelope()->clock();
-                voice[1]->envelope()->clock();
-                voice[2]->envelope()->clock();
+                    // clock envelope generators
+                    voice[0]->envelope()->clock();
+                    voice[1]->envelope()->clock();
+                    voice[2]->envelope()->clock();
 
-                if (unlikely(resampler->input(output())))
+                    if (unlikely(resampler->input(output())))
+                    {
+                        buf[s++] = resampler->getOutput();
+                    }
+                }
+                else if (unlikely(resampler->input(0)))
                 {
-                    buf[s++] = resampler->getOutput();
+                    buf[s++] = 0;
                 }
             }
 

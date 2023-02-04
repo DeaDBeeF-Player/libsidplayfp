@@ -96,6 +96,11 @@ void sidplayfp::mute(unsigned int sidNum, unsigned int voice, bool enable)
     sidplayer.mute(sidNum, voice, enable);
 }
 
+void sidplayfp::setIsMuted(bool muted) {
+    sidplayer.setIsMuted(muted);
+}
+
+
 void sidplayfp::debug(bool enable, FILE *out)
 {
     sidplayer.debug(enable, out);

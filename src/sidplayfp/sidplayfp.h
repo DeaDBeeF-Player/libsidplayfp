@@ -141,6 +141,8 @@ public:
      */
     void mute(unsigned int sidNum, unsigned int voice, bool enable);
 
+    // +deadbeef: optimization for seeking, mute the sidemu while seeking to get slightly better speed.
+    void setIsMuted(bool muted);
     /**
      * Get the current playing time.
      *

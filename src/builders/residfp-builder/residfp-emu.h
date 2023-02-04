@@ -66,6 +66,11 @@ public:
 
     void voice(unsigned int num, bool mute) override { m_sid.mute(num, mute); }
 
+    // +deadbeef: optimization for seeking, mute the sidemu while seeking to get slightly better speed.
+    void setIsMuted(bool muted) override {
+        m_sid.setIsMuted(muted);
+    }
+
     void model(SidConfig::sid_model_t model, bool digiboost) override;
 
     // Specific to resid

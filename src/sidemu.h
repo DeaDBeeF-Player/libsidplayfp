@@ -111,6 +111,9 @@ public:
      */
     virtual void voice(unsigned int num, bool mute) = 0;
 
+    // +deadbeef: optimization for seeking, mute the sidemu while seeking to get slightly better speed.
+    virtual void setIsMuted(bool muted) {}
+
     /**
      * Set SID model.
      */

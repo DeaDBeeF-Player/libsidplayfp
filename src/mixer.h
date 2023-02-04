@@ -178,6 +178,11 @@ public:
      */
     void addSid(sidemu *chip);
 
+    // +deadbeef: this is necessary for iterating over all chips when muting/unmuting
+    size_t sidCount() const {
+        return m_chips.size();
+    }
+
     /**
      * Get a SID from the mixer.
      *

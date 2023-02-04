@@ -190,6 +190,14 @@ void Player::mute(unsigned int sidNum, unsigned int voice, bool enable)
         s->voice(voice, enable);
 }
 
+// +deadbeef: optimization for seeking, mute the sidemu while seeking to get slightly better speed.
+void Player::setIsMuted(bool muted) {
+    for (int i = 0; i < m_mixer.sidCount(); i++) {
+        sidemu *s = m_mixer.getSid(i);
+        s->setIsMuted(muted);
+    }
+}
+
 /**
  * @throws MOS6510::haltInstruction
  */

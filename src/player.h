@@ -163,6 +163,9 @@ public:
 
     void mute(unsigned int sidNum, unsigned int voice, bool enable);
 
+    // +deadbeef: optimization for seeking, mute the sidemu while seeking to get slightly better speed.
+    void setIsMuted(bool muted);
+
     const char *error() const { return m_errorString; }
 
     void setKernal(const uint8_t* rom);
